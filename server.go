@@ -23,8 +23,8 @@ func main() {
 	postgreSQL := database.ConnectDB()
 
 	echoServer.GET("/", func(c echo.Context) error {
-		models.QueryDevelopmentTools(postgreSQL)
-		return c.String(http.StatusOK, "Hello, World!")
+		query := models.QueryDevelopmentTools(postgreSQL)
+		return c.JSON(http.StatusOK, query)
 	})
 	echoServer.Logger.Fatal(echoServer.Start(":1323"))
 	defer func() {
