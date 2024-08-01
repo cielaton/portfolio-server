@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"portfolio-server/database"
+	"portfolio-server/models"
 )
 
 func main() {
@@ -19,13 +20,14 @@ func main() {
 	echoServer := echo.New()
 
 	// Connect to the database
-	database.ConnectDB()
+	postgreSQL := database.ConnectDB()
 
 	echoServer.GET("/", func(c echo.Context) error {
+		models.QueryDevelopmentTools(postgreSQL)
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 	echoServer.Logger.Fatal(echoServer.Start(":1323"))
 	defer func() {
-		database.DisconnectDB()
+		database.DisconnectDB(postgreSQL)
 	}()
 }
