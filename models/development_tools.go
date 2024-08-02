@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"os"
 )
 
 type Style struct {
@@ -29,7 +30,7 @@ func QueryDevelopmentTools(database *pgx.Conn) []developmentTools {
 	// Query command
 	query, err := database.Query(context.Background(), "SELECT tools.id, tools.field, tools.descriptions, tools.text_color, tools.span, icons.path, icons.icon_names FROM favourite_tools as tools INNER JOIN favourite_tools_icons as icons on tools.field = icons.field")
 	if err != nil {
-		fmt.Printf("[Database] Unable to query development tools: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "[Database] Error querying development tools: %v\n", err)
 	}
 
 	// Iterate through the query results and assign it into returned value
@@ -42,7 +43,7 @@ func QueryDevelopmentTools(database *pgx.Conn) []developmentTools {
 
 		err := query.Scan(&id, &field, &description, &textColor, &span, &path, &iconNames)
 		if err != nil {
-			fmt.Printf("[Database] Scan error: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "[Database] Scan error: %v\n", err)
 			return nil
 		}
 

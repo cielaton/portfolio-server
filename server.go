@@ -7,9 +7,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"net/http"
 	"os"
 	"portfolio-server/database"
 	"portfolio-server/handlers"
+	"portfolio-server/models"
 )
 
 func databaseMiddleware(database *pgx.Conn) echo.MiddlewareFunc {
@@ -46,6 +48,10 @@ func main() {
 	echoServer.Use(databaseMiddleware(postgreSQL))
 
 	echoServer.GET("/development-tools", handlers.GetDevelopmentTools)
+	echoServer.GET("/personal-projects", func(c echo.Context) error {
+		result := models.QueryProjects(postgreSQL, "personal_projects")
+		return c.JSON(http.StatusOK, result)
+	})
 
 	echoServer.Logger.Fatal(echoServer.Start(":1323"))
 	defer func() {
