@@ -7,12 +7,12 @@ import (
 )
 
 type Project struct {
-	Id                 int
-	ProjectName        string
-	ProjectDescription string
-	Link               string
-	Technologies       []string
-	ImagePath          string
+	Id                 int      `json:"id"`
+	ProjectName        string   `json:"projectName"`
+	ProjectDescription string   `json:"projectDescription"`
+	Link               string   `json:"link"`
+	Technologies       []string `json:"technologies"`
+	ImagePath          string   `json:"imagePath"`
 }
 
 func QueryProjects(database *pgx.Conn, projectType string) []Project {

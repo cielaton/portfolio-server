@@ -2,35 +2,34 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"github.com/jackc/pgx/v5"
-	"os"
+	"github.com/rs/zerolog/log"
 )
 
 type Style struct {
-	Span      int
-	TextColor string
+	Span      int    `json:"span"`
+	TextColor string `json:"textColor"`
 }
 
 type Icons struct {
-	Path string
-	Name []string
+	Path string   `json:"path"`
+	Name []string `json:"name"`
 }
 
 // the development tools data model
 type developmentTools struct {
-	Id          int
-	Field       string
-	Description string
-	Style       Style
-	Icons       Icons
+	Id          int    `json:"id"`
+	Field       string `json:"field"`
+	Description string `json:"description"`
+	Style       Style  `json:"style"`
+	Icons       Icons  `json:"icons"`
 }
 
 func QueryDevelopmentTools(database *pgx.Conn) []developmentTools {
 	// Query command
 	query, err := database.Query(context.Background(), "SELECT tools.id, tools.field, tools.descriptions, tools.text_color, tools.span, icons.path, icons.icon_names FROM favourite_tools as tools INNER JOIN favourite_tools_icons as icons on tools.field = icons.field")
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "[Database] Error querying development tools: %v\n", err)
+		log.Err(err).Msg("[Database] Error querying development tools: %v\n")
 	}
 
 	// Iterate through the query results and assign it into returned value
@@ -43,7 +42,7 @@ func QueryDevelopmentTools(database *pgx.Conn) []developmentTools {
 
 		err := query.Scan(&id, &field, &description, &textColor, &span, &path, &iconNames)
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "[Database] Scan error: %v\n", err)
+			log.Err(err).Msg("[Database] Scan error: %v\n")
 			return nil
 		}
 

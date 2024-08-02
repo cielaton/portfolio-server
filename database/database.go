@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog/log"
 	"os"
 )
 
@@ -11,7 +12,7 @@ func ConnectDB() *pgx.Conn {
 	databaseURL, ok := os.LookupEnv("DATABASE_URL")
 	database, err := pgx.Connect(context.Background(), databaseURL)
 	if err != nil || !ok {
-		fmt.Printf("[Database] Unable to connect: %v\n", err)
+		log.Err(err).Msg("[Database] Unable to connect: %v\n")
 		os.Exit(1)
 	}
 	fmt.Println("[Database] Successfully connected.")
