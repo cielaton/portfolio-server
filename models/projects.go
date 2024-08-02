@@ -17,7 +17,7 @@ type Project struct {
 
 func QueryProjects(database *pgx.Conn, projectType string) []Project {
 	// Query command with dynamic table
-	query, err := database.Query(context.Background(), "SELECT id, project_name, project_description, link, technologies, image_path FROM "+projectType)
+	query, err := database.Query(context.Background(), "SELECT id, project_name, project_description, link, technologies, image_path FROM "+projectType+" ORDER BY id")
 	if err != nil {
 		log.Err(err).Msg("[Database] Error querying personal projects: %v\n")
 	}
