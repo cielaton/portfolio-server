@@ -12,12 +12,12 @@ type Project struct {
 	ProjectDescription string   `json:"projectDescription"`
 	Link               string   `json:"link"`
 	Technologies       []string `json:"technologies"`
-	ImagePath          string   `json:"imagePath"`
+	ImageName          string   `json:"imageName"`
 }
 
 func QueryProjects(database *pgx.Conn, projectType string) []Project {
 	// Query command with dynamic table
-	query, err := database.Query(context.Background(), "SELECT id, project_name, project_description, link, technologies, image_path FROM "+projectType+" ORDER BY id")
+	query, err := database.Query(context.Background(), "SELECT id, project_name, project_description, link, technologies, image_name FROM "+projectType+" ORDER BY id")
 	if err != nil {
 		log.Err(err).Msg("[Database] Error querying personal projects: %v\n")
 	}
@@ -32,16 +32,16 @@ func QueryProjects(database *pgx.Conn, projectType string) []Project {
 			projectDescription string
 			link               string
 			technologies       []string
-			imagePath          string
+			imageName          string
 		)
-		err := query.Scan(&id, &projectName, &projectDescription, &link, &technologies, &imagePath)
+		err := query.Scan(&id, &projectName, &projectDescription, &link, &technologies, &imageName)
 		if err != nil {
 			log.Err(err).Msg("[Database] Error scanning personal projects: %v\n")
 			return nil
 		}
 
 		returnedProjects = append(returnedProjects, Project{
-			id, projectName, projectDescription, link, technologies, imagePath,
+			id, projectName, projectDescription, link, technologies, imageName,
 		})
 	}
 	// Close query result on function return
