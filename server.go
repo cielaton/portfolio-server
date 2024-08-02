@@ -4,7 +4,10 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"log"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"os"
 	"portfolio-server/database"
 	"portfolio-server/handlers"
 )
@@ -22,11 +25,21 @@ func main() {
 	// Load .env variables
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal().Err(err).Msg("Error loading .env file")
 	}
 
 	// Create the echo server
 	echoServer := echo.New()
+
+	// Configure logger
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	echoServer.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:    true,
+		LogStatus: true,
+		LogValuesFunc: func(c echo.Context, loggerValue middleware.RequestLoggerValues) error {
+			log.Info().Str("URI", loggerValue.URI).Int("Status", loggerValue.Status).Msg("request")
+			return nil
+		}}))
 
 	// Connect to the database
 	postgreSQL := database.ConnectDB()
