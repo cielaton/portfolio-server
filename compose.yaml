@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    ports:
+      - "80:1323"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
