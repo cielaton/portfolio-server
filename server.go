@@ -32,12 +32,15 @@ func main() {
 	echoServer := echo.New()
 
 	// Configure logger
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
 	echoServer.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
-		LogURI:    true,
-		LogStatus: true,
+		LogURI:      true,
+		LogStatus:   true,
+		LogMethod:   true,
+		LogLatency:  true,
+		LogRemoteIP: true,
 		LogValuesFunc: func(c echo.Context, loggerValue middleware.RequestLoggerValues) error {
-			log.Info().Str("URI", loggerValue.URI).Int("Status", loggerValue.Status).Msg("request")
+			log.Info().Str("URI", loggerValue.URI).Str("Method", loggerValue.Method).Dur("Latency", loggerValue.Latency).Str("Remote IP", loggerValue.RemoteIP).Int("Status", loggerValue.Status).Msg("request")
 			return nil
 		}}))
 
